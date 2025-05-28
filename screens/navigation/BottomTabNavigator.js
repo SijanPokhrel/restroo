@@ -6,6 +6,7 @@ import HomeScreen from '../pages/HomeScreen';
 import FeedbackScreen from '../pages/FeedbackScreen';
 import MenuScreen from '../pages/MenuScreen';
 import ContactScreen from '../pages/ContactScreen';
+import AccountScreen from '../pages/AccountScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -18,7 +19,6 @@ export default function HomeTabs() {
                 tabBarInactiveTintColor: '#000',
             }}
         >
-
 
             <Tab.Screen name="Home" component={HomeScreen}
                 options={{
@@ -49,11 +49,18 @@ export default function HomeTabs() {
                 options={{
                     tabBarIcon: ({ focused }) => (
                         <View style={styles.iconContainer}>
+                            <Image style={{ width: 20, height: 20, resizeMode: 'contain', tintColor: focused ? "#EA4A57" : "black" }} source={require('../../assets/contact-us.png')} />
+                        </View>
+                    )
+                }} />
+            <Tab.Screen name="Account" component={AccountScreen}
+                options={{
+                    tabBarIcon: ({ focused }) => (
+                        <View style={styles.iconContainer}>
                             <Image style={{ width: 20, height: 20, resizeMode: 'contain', tintColor: focused ? "#EA4A57" : "black" }} source={require('../../assets/contactb.png')} />
                         </View>
                     )
                 }} />
-
         </Tab.Navigator>
     );
 }

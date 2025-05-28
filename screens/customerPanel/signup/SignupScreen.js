@@ -8,7 +8,8 @@ import {
   SafeAreaView,
   Alert,
 } from 'react-native';
-
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../../../firebase'; // ✅ Import your Firebase auth instance
 
 export default function SignupScreen({ navigation }) {
   const [email, setEmail] = useState('');
@@ -26,9 +27,15 @@ export default function SignupScreen({ navigation }) {
       return;
     }
 
+    if (password.length < 6) {
+      Alert.alert('Weak Password', 'Password must be at least 6 characters.');
+      return;
+    }
+
     try {
       await createUserWithEmailAndPassword(auth, email, password);
       console.log('User registered successfully');
+      Alert.alert('Success', 'Account created successfully!');
       navigation.replace('LoginScreen');
     } catch (error) {
       console.error('Signup Error:', error);

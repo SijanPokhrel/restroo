@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
 
   headerWrapper: {
     backgroundColor: '#fff',
-    paddingTop: 50,
+    // paddingTop: 50,
     paddingBottom: 10,
   },
   header: {

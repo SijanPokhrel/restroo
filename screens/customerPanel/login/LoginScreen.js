@@ -1,13 +1,44 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
+import {
+    View,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    StyleSheet,
+    SafeAreaView,
+    Alert,
+} from 'react-native';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth, db } from '../../../firebase';
+import { doc, getDoc } from 'firebase/firestore';
 
 export default function LoginScreen({ navigation }) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    const handleLogin = () => {
-        console.log('Logging in:', email, password);
-        navigation.replace('HomeTabs');
+    const handleLogin = async () => {
+        if (!email || !password) {
+            Alert.alert('Missing Fields', 'Please enter both email and password.');
+            return;
+        }
+
+        try {
+            const userCredential = await signInWithEmailAndPassword(auth, email, password);
+            const user = userCredential.user;
+
+            console.log('Logged in user:', user.email);
+
+            
+            const userDoc = await getDoc(doc(db, 'users', user.uid));
+            if (userDoc.exists()) {
+                console.log('User Firestore data:', userDoc.data());
+            }
+
+            navigation.replace('HomeTabs');
+        } catch (error) {
+            console.error('Login error:', error.message);
+            Alert.alert('Login Failed', 'Invalid email or password. Please try again.');
+        }
     };
 
     return (
@@ -19,11 +50,12 @@ export default function LoginScreen({ navigation }) {
                 <Text style={styles.label}>Email Address</Text>
                 <TextInput
                     style={styles.input}
-                    placeholder="Enter yout email"
+                    placeholder="Enter your email"
                     placeholderTextColor="#878787"
                     keyboardType="email-address"
                     value={email}
                     onChangeText={setEmail}
+                    autoCapitalize="none"
                 />
 
                 <Text style={styles.label}>Password</Text>
@@ -37,7 +69,7 @@ export default function LoginScreen({ navigation }) {
                 />
 
                 <TouchableOpacity style={styles.button} onPress={handleLogin}>
-                    <Text style={styles.buttonText}>Sign In</Text>
+                    <Text style={styles.buttonText}>Log in</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
@@ -53,7 +85,6 @@ export default function LoginScreen({ navigation }) {
                         <Text style={styles.link}>Login</Text> as administrator
                     </Text>
                 </TouchableOpacity>
-
             </View>
         </SafeAreaView>
     );
@@ -77,9 +108,9 @@ const styles = StyleSheet.create({
     },
     label: {
         fontSize: 18,
-        fontWeight: 600,
+        fontWeight: '600',
         marginBottom: 10,
-        color: '#101010'
+        color: '#101010',
     },
     signintxt: {
         fontSize: 16,
@@ -123,7 +154,6 @@ const styles = StyleSheet.create({
     ortxt: {
         textAlign: 'center',
         color: '#555',
-        marginBlock:5
-
-    }
+        marginVertical: 5,
+    },
 });
